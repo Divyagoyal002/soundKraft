@@ -7,7 +7,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-DB_PATH = Path(os.environ.get("SOUNDKRAFT_DB", ROOT / "data" / "soundkraft.db"))
+# On Vercel the deployment is read-only except /tmp, which is wiped whenever an instance
+# is recycled: data there is demo-only and is not kept.
+_DEFAULT_DB = Path("/tmp/soundkraft.db") if os.environ.get("VERCEL") else ROOT / "data" / "soundkraft.db"
+DB_PATH = Path(os.environ.get("SOUNDKRAFT_DB", _DEFAULT_DB))
 MODEL_PATH = Path(os.environ.get("SOUNDKRAFT_MODEL", ROOT / "models" / "calibration.joblib"))
 
 # PIN protecting the caregiver/clinician dashboard. Change it before any real use.

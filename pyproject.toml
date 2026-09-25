@@ -3,6 +3,18 @@ name = "soundkraft"
 version = "0.1.0"
 description = "Gamified, sensory-adaptive cognitive screening and tracking prototype (not a diagnostic tool)"
 requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "itsdangerous>=2.1",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "joblib>=1.3",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
