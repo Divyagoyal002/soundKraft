@@ -57,3 +57,16 @@ def test_settings_are_clamped():
     s = normalise({"pace": 9, "target_scale": 0.1, "text_scale": 1.3, "contrast": "x", "audio_cues": "false"})
     assert s["pace"] == 2.0 and s["target_scale"] == 1.0 and s["text_scale"] == 1.25
     assert s["contrast"] == "standard" and s["audio_cues"] is False
+
+
+def test_old_database_is_migrated(tmp_path):
+    import sqlite3
+
+    from soundkraft import db
+
+    path = tmp_path / "old.db"
+    old = sqlite3.connect(path)
+    old.execute("CREATE TABLE trials (id INTEGER PRIMARY KEY, round_id INTEGER, trial_index INTEGER)")
+    old.close()
+    cols = {r["name"] for r in db.connect(path).execute("PRAGMA table_info(trials)")}
+    assert "wrong_taps" in cols
