@@ -1,0 +1,7 @@
+{% set st = (r.trend if r is defined else rep.trend).status %}
+<span class="status status-{{ st }}">
+  {%- if st == 'follow_up' %}<span aria-hidden="true">▲</span> Discuss with a professional
+  {%- elif st == 'watch' %}<span aria-hidden="true">●</span> Watch
+  {%- elif st == 'stable' %}<span aria-hidden="true">✓</span> Steady
+  {%- else %}<span aria-hidden="true">…</span> Building baseline{% endif -%}
+</span>

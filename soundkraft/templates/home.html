@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Welcome to SoundKraft</h1>
+  <p class="lead">Short, friendly brain games. About 10 minutes a day.</p>
+</section>
+
+<section>
+  <h2>Who is playing today?</h2>
+  {% if players %}
+  <div class="player-grid">
+    {% for p in players %}
+    <a class="player-card" href="/play/{{ p.id }}">
+      <span class="avatar" aria-hidden="true">{{ p.display_name[:1] | upper }}</span>
+      <span class="player-name">{{ p.display_name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No players yet. Add the first one below.</p>
+  {% endif %}
+  <a class="btn btn-primary btn-big" href="/join">+ New player</a>
+</section>
+
+<section class="subtle-links">
+  <a href="/dashboard">Caregiver &amp; clinician dashboard</a>
+</section>
+{% endblock %}

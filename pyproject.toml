@@ -1,0 +1,9 @@
+[project]
+name = "soundkraft"
+version = "0.1.0"
+description = "Gamified, sensory-adaptive cognitive screening and tracking prototype (not a diagnostic tool)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

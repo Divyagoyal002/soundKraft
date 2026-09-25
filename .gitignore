@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Participant data must never be committed.
+data/*
+!data/.gitkeep
+models/*
+!models/.gitkeep
+exports/
+.env

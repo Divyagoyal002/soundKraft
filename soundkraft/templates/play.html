@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Play · SoundKraft{% endblock %}
+{% block body_class %}play-page{% endblock %}
+{% block nav %}<a href="/settings/{{ user.id }}">Settings</a> <a href="/">Switch player</a>{% endblock %}
+{% block content %}
+<div id="app" data-user="{{ user.id }}" data-settings='{{ settings | tojson }}'>
+
+  <section class="screen" id="screen-lobby">
+    <h1>Hello, {{ user.display_name }}!</h1>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">Points</span><span class="stat-value" id="lobby-points">{{ total_points }}</span></div>
+      <div class="stat"><span class="stat-label">Sessions played</span><span class="stat-value">{{ sessions_done }}</span></div>
+    </div>
+    <p class="lead">Today: four short games, about 10 minutes.</p>
+    <button class="btn btn-primary btn-big" id="start-session" type="button">Start today's games</button>
+  </section>
+
+  <section class="screen" id="screen-intro" hidden>
+    <p class="game-progress" id="intro-progress"></p>
+    <h1 id="intro-title"></h1>
+    <p class="instructions" id="intro-text"></p>
+    <div class="intro-demo" id="intro-demo" aria-hidden="true"></div>
+    <div class="btn-row">
+      <button class="btn" id="intro-speak" type="button">🔊 Read aloud</button>
+      <button class="btn btn-primary btn-big" id="intro-go" type="button">I'm ready</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-game" hidden>
+    <div class="game-hud">
+      <span id="hud-title"></span>
+      <span id="hud-round"></span>
+      <span id="hud-points">0 pts</span>
+    </div>
+    <div class="game-stage" id="stage"></div>
+  </section>
+
+  <section class="screen" id="screen-round" hidden>
+    <h1 id="round-heading">Well done!</h1>
+    <p class="stars" id="round-stars" aria-live="polite"></p>
+    <p class="lead" id="round-points"></p>
+    <p class="notice" id="round-adapt" hidden></p>
+    <button class="btn btn-primary btn-big" id="round-next" type="button">Continue</button>
+  </section>
+
+  <section class="screen" id="screen-done" hidden>
+    <h1>That's everything for today!</h1>
+    <p class="lead" id="done-points"></p>
+    <p>Thank you for playing. Come back tomorrow to keep your streak going.</p>
+    <a class="btn btn-primary btn-big" href="/">Finish</a>
+  </section>
+
+  <section class="screen" id="screen-error" hidden>
+    <h1>Something went wrong</h1>
+    <p id="error-text"></p>
+    <a class="btn btn-big" href="/play/{{ user.id }}">Try again</a>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/core.js"></script>
+<script src="/static/js/games/nback.js"></script>
+<script src="/static/js/games/stroop.js"></script>
+<script src="/static/js/games/corsi.js"></script>
+<script src="/static/js/games/trails.js"></script>
+<script src="/static/js/play.js"></script>
+{% endblock %}

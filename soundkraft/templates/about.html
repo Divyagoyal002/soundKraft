@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}About · SoundKraft{% endblock %}
+{% block content %}
+<article class="prose">
+  <h1>About SoundKraft</h1>
+  <p>SoundKraft is a student research prototype. It offers four short games that exercise different
+     thinking skills:</p>
+  <ul>
+    {% for key, g in GAMES.items() %}
+    <li><strong>{{ g.title }}</strong> – {{ DOMAIN_LABELS[g.domain] | lower }}</li>
+    {% endfor %}
+  </ul>
+  <p>While you play, SoundKraft records how you answer: whether you were right, how quickly you
+     responded, and how you touched the screen. Over many sessions this shows whether your performance
+     is staying steady compared with <em>your own</em> usual level.</p>
+  <h2>What SoundKraft is not</h2>
+  <p><strong>SoundKraft does not diagnose anything.</strong> Its results are tracking indicators only. A
+     change in scores can have many everyday causes (tiredness, illness, a new device, distractions).
+     If you or your family are concerned about memory or thinking, please talk to a doctor.</p>
+  <h2>Your data</h2>
+  <p>Results are stored on this device's SoundKraft server. They are only shown on the caregiver
+     dashboard if you agreed to share them, and the dashboard is protected by a PIN. You can ask for
+     your data to be deleted at any time.</p>
+</article>
+{% endblock %}

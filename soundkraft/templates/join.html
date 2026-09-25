@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}New player · SoundKraft{% endblock %}
+{% block content %}
+<h1>New player</h1>
+{% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+<form method="post" action="/join" class="card form">
+  <label>Your name or a nickname
+    <input name="display_name" required maxlength="40" autocomplete="off" value="{{ form.display_name or '' }}">
+  </label>
+  <label>Year of birth <span class="muted">(optional)</span>
+    <input name="birth_year" inputmode="numeric" maxlength="4" value="{{ form.birth_year or '' }}">
+  </label>
+  <label>Years of schooling <span class="muted">(optional)</span>
+    <input name="education_years" inputmode="numeric" maxlength="2" value="{{ form.education_years or '' }}">
+  </label>
+
+  <div class="consent">
+    <h2>Before you start</h2>
+    <ul>
+      <li>SoundKraft is part of a student research project.</li>
+      <li>Taking part is voluntary. You can stop at any time and ask for your data to be deleted.</li>
+      <li>The games record your answers, response times and screen touches.</li>
+      <li>SoundKraft <strong>does not diagnose</strong> any illness. It only tracks game performance over time.</li>
+      <li>If a family member or guardian helps you, please read this together.</li>
+    </ul>
+    <label class="check"><input type="checkbox" name="consent" value="yes" required>
+      I have read this and I agree to take part.</label>
+    <label class="check"><input type="checkbox" name="share" value="yes" {% if form.share != 'no' %}checked{% endif %}>
+      Share my results with my caregiver or clinician on the dashboard.</label>
+  </div>
+  <button class="btn btn-primary btn-big" type="submit">Continue</button>
+</form>
+{% endblock %}

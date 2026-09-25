@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}{{ user.display_name }} · SoundKraft dashboard{% endblock %}
+{% block body_class %}dashboard{% endblock %}
+{% block nav %}<a href="/dashboard">Players</a> <a href="/dashboard/logout">Sign out</a>{% endblock %}
+{% block content %}
+{% set t = rep.trend %}
+<p><a href="/dashboard">← All players</a></p>
+<h1>{{ user.display_name }} {% if user.is_synthetic %}<span class="tag">synthetic demo data</span>{% endif %}</h1>
+<p class="muted">{% if user.birth_year %}Born {{ user.birth_year }} · {% endif %}{% if user.education_years is not none %}{{ user.education_years }} years schooling · {% endif %}joined {{ user.created_at[:10] }}</p>
+
+<section class="card status-card">
+  {% include "_status.html" %}
+  <p>{{ t.message }}</p>
+</section>
+
+<div class="stats">
+  <div class="stat"><span class="stat-label">Sessions</span><span class="stat-value">{{ t.n_sessions }}</span></div>
+  <div class="stat"><span class="stat-label">Baseline index</span><span class="stat-value">{{ t.baseline_mean if t.baseline_mean is defined else '–' }}</span></div>
+  <div class="stat"><span class="stat-label">Recent index</span><span class="stat-value">{{ t.recent_mean if t.recent_mean is defined else '–' }}</span></div>
+  <div class="stat"><span class="stat-label">Change</span><span class="stat-value">{% if t.change is defined %}{{ '%+.1f' % t.change }}{% else %}–{% endif %}</span></div>
+</div>
+
+<section class="card">
+  <h2>Performance index over time</h2>
+  <p class="muted">0–100, higher is better. The shaded band is this person's usual range (first sessions ± 1 SD).</p>
+  {{ main_chart | safe }}
+</section>
+
+<section>
+  <h2>By skill</h2>
+  <div class="multiples">
+    {% for d, chart in domain_charts.items() %}
+    {% set dt = rep.domain_trends[d] %}
+    <div class="card">
+      <h3>{{ DOMAIN_LABELS[d] }}</h3>
+      {% set r = {'trend': dt} %}{% include "_status.html" %}
+      {{ chart | safe }}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% if rep.latest and rep.latest.features and rep.latest.features.model_estimate %}
+{% set me = rep.latest.features.model_estimate %}
+<section class="card">
+  <h2>Exploratory calibrated estimate (latest session)</h2>
+  <p>Estimated {{ me.instrument }}-scale score: <strong>{{ me.estimate }}</strong> / {{ me.max_score|int }}
+     {% if me.below_cutoff_probability is defined %}· model probability of scoring below {{ me.cutoff|int }}: {{ '%.0f' % (me.below_cutoff_probability * 100) }}%{% endif %}</p>
+  <p class="muted">From a pilot model trained on {{ me.n_train }} people. This is not a {{ me.instrument }} result and not a diagnosis.</p>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Sessions</h2>
+  <div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Date</th><th>Index</th>{% for d, lab in DOMAIN_LABELS.items() %}<th>{{ lab }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for p in rep.series | reverse %}
+      <tr><td>{{ p.date }}</td><td class="num">{{ '%.1f' % p.composite }}</td>
+      {% for d in DOMAIN_LABELS %}<td class="num">{{ '%.0f' % p.domains[d] if d in p.domains else '–' }}</td>{% endfor %}</tr>
+    {% else %}<tr><td colspan="6">No completed sessions yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p><a href="/dashboard/user/{{ user.id }}/trials.csv">Download all trials (CSV)</a> ·
+     <a href="/dashboard/user/{{ user.id }}/sessions.json">Download session features (JSON)</a></p>
+</section>
+
+<section class="card">
+  <h2>Reference screening scores</h2>
+  <p class="muted">Enter scores from a standard screening test given by a trained administrator. They are used only to calibrate SoundKraft in the validation study.</p>
+  {% if rep.references %}
+  <ul>{% for ref in rep.references %}<li>{{ ref.assessed_at }} – {{ ref.instrument }} {{ ref.score|round(1) }}/{{ ref.max_score|int }}{% if ref.notes %} ({{ ref.notes }}){% endif %}</li>{% endfor %}</ul>
+  {% endif %}
+  <form method="post" action="/dashboard/user/{{ user.id }}/reference" class="form inline-form">
+    <label>Test <select name="instrument"><option>MoCA</option><option>MMSE</option></select></label>
+    <label>Score <input name="score" type="number" min="0" max="30" step="0.5" required></label>
+    <label>Date <input name="assessed_at" type="date" value="{{ today }}" required></label>
+    <label>Notes <input name="notes" maxlength="500"></label>
+    <button class="btn" type="submit">Add score</button>
+  </form>
+</section>
+
+{% if rep.adaptations %}
+<section class="card">
+  <h2>Automatic accessibility changes</h2>
+  <p class="muted">Settings SoundKraft adjusted during play. They can affect scores, so they are logged here.</p>
+  <ul>{% for a in rep.adaptations %}<li>{{ a.created_at[:10] }}: {{ a.setting }} {{ a.old_value }} → {{ a.new_value }} ({{ a.reason }})</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<details class="card danger-zone">
+  <summary>Withdraw and delete this player</summary>
+  <form method="post" action="/dashboard/user/{{ user.id }}/delete" class="form">
+    <label>Type <strong>{{ user.display_name }}</strong> to permanently delete all of their data
+      <input name="confirm" required autocomplete="off"></label>
+    <button class="btn btn-danger" type="submit">Delete permanently</button>
+  </form>
+</details>
+{% endblock %}

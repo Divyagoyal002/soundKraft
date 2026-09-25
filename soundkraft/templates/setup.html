@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Set up · SoundKraft{% endblock %}
+{% block content %}
+<div id="setup" data-user="{{ user.id }}" data-settings='{{ settings | tojson }}'>
+  <p class="step-count" aria-live="polite"><span id="step-no">1</span> of 4</p>
+
+  <section class="setup-step" data-step="1">
+    <h1>Which text is easiest to read?</h1>
+    <div class="choice-list">
+      {% for sc in text_scales %}
+      <button class="choice" type="button" data-set="text_scale" data-value="{{ sc }}"
+              style="font-size: calc(1rem * {{ sc }})">Good morning!</button>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="setup-step" data-step="2" hidden>
+    <h1>Which one is clearer?</h1>
+    <div class="choice-row">
+      <button class="choice sample-standard" type="button" data-set="contrast" data-value="standard">This one</button>
+      <button class="choice sample-high" type="button" data-set="contrast" data-value="high">This one</button>
+    </div>
+  </section>
+
+  <section class="setup-step" data-step="3" hidden>
+    <h1>Let's check the sound</h1>
+    <p>Turn the volume up, then press the button.</p>
+    <button class="btn btn-big" type="button" id="play-sound">🔊 Play a sound</button>
+    <div class="choice-row">
+      <button class="choice" type="button" data-set="sound" data-value="yes">I heard it</button>
+      <button class="choice" type="button" data-set="sound" data-value="no">I didn't hear it</button>
+    </div>
+  </section>
+
+  <section class="setup-step" data-step="4" hidden>
+    <h1>Try moving the card</h1>
+    <p>Slide the card to the right with your finger.</p>
+    <div class="swipe-demo" id="swipe-demo"><div class="swipe-card" id="swipe-card">🍎</div></div>
+    <p id="swipe-msg" class="muted" aria-live="polite"></p>
+    <button class="choice" type="button" data-set="input_mode" data-value="tap">This is hard – I'd rather press buttons</button>
+  </section>
+
+  <section class="setup-step" data-step="5" hidden>
+    <h1>All set, {{ user.display_name }}!</h1>
+    <p>You can change these choices any time under <strong>Settings</strong>.</p>
+    <a class="btn btn-primary btn-big" href="/play/{{ user.id }}">Start playing</a>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/core.js"></script>
+<script src="/static/js/setup.js"></script>
+{% endblock %}

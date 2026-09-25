@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · SoundKraft{% endblock %}
+{% block body_class %}dashboard{% endblock %}
+{% block nav %}<a href="/dashboard">Players</a> <a href="/dashboard/logout">Sign out</a>{% endblock %}
+{% block content %}
+<h1>Players</h1>
+<p class="muted">Only players who agreed to share their results are listed. Status compares each person with
+  <em>their own</em> earlier sessions. It is a tracking indicator, not a diagnosis.</p>
+
+<div class="table-wrap">
+<table class="data">
+  <thead><tr><th>Player</th><th>Status</th><th>Sessions</th><th>Latest index</th><th class="spark-h">Trend</th><th>Last played</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><a href="/dashboard/user/{{ r.user.id }}">{{ r.user.display_name }}</a>
+        {% if r.user.is_synthetic %}<span class="tag">synthetic</span>{% endif %}</td>
+      <td>{% include "_status.html" with context %}</td>
+      <td class="num">{{ r.n }}</td>
+      <td class="num">{{ '%.0f' % r.latest.composite if r.latest else '–' }}</td>
+      <td class="spark">{{ r.spark | safe }}</td>
+      <td>{{ r.latest.date if r.latest else '–' }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">No shared players yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<section class="card">
+  <h2>Calibration model</h2>
+  {% if model %}
+  <p>Trained {{ model.trained_at }} on <strong>{{ model.n }}</strong> participants against {{ model.instrument }}.
+     Leave-one-out mean absolute error <strong>{{ model.metrics.loocv_mae }}</strong> points,
+     r = {{ model.metrics.loocv_r }}{% if model.metrics.loocv_auc %}, AUC = {{ model.metrics.loocv_auc }}{% endif %}.</p>
+  <p class="muted">Features: {{ model.features | join(', ') }}. Pilot-sized samples give preliminary, exploratory results only.</p>
+  {% else %}
+  <p class="muted">No calibration model yet. After the validation study, run
+     <code>python -m scripts.calibrate</code> to train one.</p>
+  {% endif %}
+</section>
+{% endblock %}

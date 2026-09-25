@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}SoundKraft{% endblock %}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/app.css">
+  {% block head %}{% endblock %}
+</head>
+{% set s = settings if settings is defined else {} %}
+<body class="{% if s.contrast == 'high' %}contrast-high{% endif %} {% block body_class %}{% endblock %}"
+      style="--text-scale: {{ s.text_scale or 1.25 }}; --target-scale: {{ s.target_scale or 1 }};">
+  <header class="topbar">
+    <a class="brand" href="/">Sound<span>Kraft</span></a>
+    <nav>{% block nav %}<a href="/about">About</a>{% endblock %}</nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="disclaimer">{{ DISCLAIMER }}</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
